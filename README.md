@@ -7,6 +7,17 @@ A collection of custom Claude Code plugins for code review and development workf
 | Plugin | Description |
 |--------|-------------|
 | [smart-code-review](./smart-code-review) | Intelligent code review with re-review support for new commits |
+| [setup-code-review](./setup-code-review) | Install smart code review workflow to any repository via PR |
+
+## Quick Start
+
+To add smart code review to any repository, run:
+
+```
+/setup-code-review:install
+```
+
+This creates a PR with the workflow file. After merging, add the `CLAUDE_CODE_OAUTH_TOKEN` secret.
 
 ## Installation
 

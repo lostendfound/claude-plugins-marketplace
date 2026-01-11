@@ -13,6 +13,12 @@
       "source": "./smart-code-review",
       "description": "Intelligent code review with re-review support for new commits",
       "version": "1.0.0"
+    },
+    {
+      "name": "setup-code-review",
+      "source": "./setup-code-review",
+      "description": "Install smart code review workflow to any repository via PR",
+      "version": "1.0.0"
     }
   ]
 }

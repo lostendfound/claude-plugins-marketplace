@@ -1,0 +1,8 @@
+{
+  "name": "setup-code-review",
+  "description": "Install smart code review workflow to any repository via PR",
+  "version": "1.0.0",
+  "author": {
+    "name": "Lost End Found"
+  }
+}
