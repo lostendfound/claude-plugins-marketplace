@@ -1,0 +1,47 @@
+# Example GitHub Actions workflow for Smart Code Review
+# Copy this file to your repository at: .github/workflows/claude-code-review.yml
+#
+# Prerequisites:
+# 1. Set up CLAUDE_CODE_OAUTH_TOKEN secret in your repository
+# 2. Update YOUR_USERNAME to your GitHub username in plugin_marketplaces
+
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    # Optional: Only run on specific file changes
+    # paths:
+    #   - "src/**/*.ts"
+    #   - "src/**/*.tsx"
+
+jobs:
+  claude-review:
+    # Skip draft PRs
+    if: github.event.pull_request.draft == false
+
+    runs-on: ubuntu-latest  # Change to 'self-hosted' if using self-hosted runner
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Plugin marketplace - UPDATE YOUR_USERNAME to your GitHub username
+          plugin_marketplaces: |
+            https://github.com/YOUR_USERNAME/claude-plugins-marketplace.git
+          # Smart code review plugin with re-review support
+          plugins: |
+            smart-code-review@lostendfound-plugins
+          prompt: "/smart-code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"

@@ -1,0 +1,8 @@
+{
+  "name": "smart-code-review",
+  "description": "Intelligent code review with re-review support for new commits",
+  "version": "1.0.0",
+  "author": {
+    "name": "Lost End Found"
+  }
+}
