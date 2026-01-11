@@ -10,7 +10,10 @@ allowed-tools:
   - Bash(git push:*)
   - Bash(git status:*)
   - Bash(git pull:*)
+  - Bash(git clone:*)
   - Bash(mkdir:*)
+  - Bash(cp:*)
+  - Bash(rm:*)
   - Read
   - Write
   - Glob
@@ -38,7 +41,18 @@ Follow these steps precisely:
 2. Create a new branch: `add-claude-code-review`
 3. If branch already exists, ask user if they want to overwrite it
 
-### Step 3: Create Workflow File
+### Step 3: Clone and Embed Plugin
+
+Clone the smart-code-review plugin and embed it in the repository:
+
+```bash
+mkdir -p .claude/plugins
+git clone --depth 1 https://github.com/lostendfound/claude-plugins-marketplace.git /tmp/claude-marketplace
+cp -r /tmp/claude-marketplace/smart-code-review .claude/plugins/
+rm -rf /tmp/claude-marketplace
+```
+
+### Step 4: Create Workflow File
 
 Create the file `.github/workflows/claude-code-review.yml` with this content:
 
@@ -69,20 +83,17 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: |
-            https://github.com/lostendfound/claude-plugins-marketplace.git
-          plugins: |
-            smart-code-review@lostendfound-plugins
+          # Plugin is embedded in .claude/plugins/smart-code-review
           prompt: "/smart-code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
 ```
 
-### Step 4: Commit and Push
+### Step 5: Commit and Push
 
-1. Stage the workflow file: `git add .github/workflows/claude-code-review.yml`
-2. Commit with message: `feat: add Claude smart code review workflow`
+1. Stage all files: `git add .claude/plugins/smart-code-review .github/workflows/claude-code-review.yml`
+2. Commit with message: `feat: add Claude smart code review workflow with embedded plugin`
 3. Push the branch to origin
 
-### Step 5: Create Pull Request
+### Step 6: Create Pull Request
 
 Create a PR using `gh pr create` with:
 
@@ -94,6 +105,11 @@ Create a PR using `gh pr create` with:
 
 This PR adds an automated code review workflow using Claude Code with the smart-code-review plugin.
 
+## What's Included
+
+- **Embedded plugin** in `.claude/plugins/smart-code-review/` - no external marketplace dependencies
+- **GitHub workflow** in `.github/workflows/claude-code-review.yml`
+
 ## Features
 
 - **Automatic code review** on every PR
@@ -103,7 +119,7 @@ This PR adds an automated code review workflow using Claude Code with the smart-
 
 ## Setup Required
 
-After merging, you need to add the `CLAUDE_CODE_OAUTH_TOKEN` secret to your repository:
+After merging, add the `CLAUDE_CODE_OAUTH_TOKEN` secret to your repository:
 
 1. Go to **Settings > Secrets and variables > Actions**
 2. Click **New repository secret**
@@ -120,16 +136,17 @@ After merging, you need to add the `CLAUDE_CODE_OAUTH_TOKEN` secret to your repo
 Generated with [Claude Code](https://claude.ai/code)
 ```
 
-### Step 6: Return to Default Branch
+### Step 7: Return to Default Branch
 
 Switch back to the default branch after creating the PR.
 
-### Step 7: Output Result
+### Step 8: Output Result
 
 Tell the user:
 1. The PR was created successfully
 2. Provide the PR URL
-3. Remind them to add the `CLAUDE_CODE_OAUTH_TOKEN` secret after merging
+3. The plugin is embedded in `.claude/plugins/smart-code-review/` and will be committed with the PR
+4. Remind them to add the `CLAUDE_CODE_OAUTH_TOKEN` secret after merging
 
 ## Error Handling
 
